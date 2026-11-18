@@ -25,23 +25,59 @@ Todos los datos son sintéticos (RQ_021): no hay información real de estudiante
 
 > **Actores.** El acompañamiento pedagógico lo realiza y lo registra el **tutor**, sobre los **docentes** de la institución, que no son usuarios del sistema. El **tutor líder** supervisa y evalúa a los tutores. Esta lectura corrige una inconsistencia del documento; los cambios que hay que hacerle están en [CORRECCIONES-PROPUESTA.md](CORRECCIONES-PROPUESTA.md).
 
+## Contenido del repositorio
+
+| Ruta | Qué es |
+|---|---|
+| `api/` | API REST (Node + TypeScript) y sus pruebas |
+| `web/` | Interfaz (Angular) |
+| `docker-compose.yml` | Base de datos, API e interfaz en contenedores |
+| `iniciar-demo.cmd`, `reiniciar-datos.cmd` | Atajos de Windows para levantar la demo y reiniciar los datos |
+| `MateriaJueves_ParcialFinalCorregido.docx` | La propuesta técnica con las correcciones de actores ya aplicadas |
+| `CORRECCIONES-PROPUESTA.md` | Qué se corrigió en la propuesta y por qué |
+
 ## Cómo levantarlo
 
-Requisito único: **Docker Desktop abierto**.
+**Requisitos.**
+- Git.
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y **abierto**.
+- Los puertos **8080**, **3000** y **5433** libres.
+
+Node solo hace falta para correr las pruebas o desarrollar sin contenedores.
 
 ```
-iniciar-demo.cmd
+git clone https://github.com/eduardmesa09/SEES.git
+cd SEES
 ```
 
-o, lo que es lo mismo, `docker compose up -d`. Queda en **http://localhost:8080**.
+Para levantarlo, en Windows basta con doble clic en `iniciar-demo.cmd`. En cualquier sistema:
 
-La primera vez tarda varios minutos y necesita internet, porque descarga las imágenes base y construye las del Piloto. Las siguientes veces arranca en segundos con las imágenes ya construidas. Si se cambia el código, hay que reconstruir con `docker compose up -d --build` (también necesita internet).
+```
+docker compose up -d
+```
 
-| Para | Comando |
-|---|---|
-| Dejar los datos como recién instalados | `reiniciar-datos.cmd` |
-| Apagar | `docker compose down` |
-| Ver los registros del API | `docker compose logs -f api` |
+Queda en **http://localhost:8080**. El API responde en http://localhost:3000/api/salud.
+
+**La primera vez:**
+- Tarda varios minutos y necesita internet, porque descarga las imágenes base y construye las del Piloto.
+- Al arrancar, el API crea la base de datos y carga los datos sintéticos.
+
+**Las siguientes veces:** arranca en segundos y sin internet, con las imágenes ya construidas.
+
+**Después de un `git pull` que cambie el código:** hay que reconstruir con `docker compose up -d --build`, que también necesita internet.
+
+| Para | Windows | Cualquier sistema |
+|---|---|---|
+| Dejar los datos como recién instalados | `reiniciar-datos.cmd` | `docker compose exec api node dist/reiniciar.js` |
+| Apagar | | `docker compose down` |
+| Apagar y borrar la base de datos | | `docker compose down -v` |
+| Ver los registros del API | | `docker compose logs -f api` |
+
+Los datos sintéticos se generan **relativos a la fecha del día en que se cargan**: el mes anterior queda con historia completa y el mes en curso con historia parcial.
+
+**Si la demo es otro día:** reinicie los datos poco antes de la sustentación para que el guion funcione tal como está escrito. Reiniciar también borra lo que se haya registrado en los ensayos.
+
+**Si cambia el esquema de la base de datos:** el API solo crea el esquema cuando la base está vacía. Si un `git pull` trae cambios en `api/sql/001_schema.sql`, después de reconstruir hay que reiniciar los datos o correr `docker compose down -v`.
 
 ## Usuarios de demostración
 
@@ -205,15 +241,15 @@ Los módulos del API son los del numeral 2.7 y respetan los diagramas de secuenc
 
 ## Pruebas
 
-Desde PowerShell, con la ruta escrita con `C:` en mayúscula (con `c:` en minúscula vitest no arranca):
+Requieren Node 20 o superior y la base de datos arriba (`docker compose up -d db`). Usan una base aparte, `sses_test`, que se crea sola, así que no tocan los datos de la demostración.
 
 ```
-Set-Location 'C:\Users\ASUS\Documents\SEES\api'
+cd api
 npm install
 npm test
 ```
 
-Necesitan la base de datos arriba (`docker compose up -d db`). Usan una base aparte, `sses_test`, así que no tocan los datos de la demostración.
+> **En Windows:** si vitest falla con "failed to find the runner", la terminal está en una ruta con la letra de unidad en minúscula (`c:\...`). Ábrala en la ruta con la letra en mayúscula, por ejemplo en PowerShell con `Set-Location 'C:\ruta\al\repo\api'`.
 
 Son 83 casos en tres archivos:
 - `unitarias`: lógica pura.
@@ -223,6 +259,8 @@ Son 83 casos en tres archivos:
 Los casos llevan los identificadores de la matriz del numeral 2.9.4: PU-01 a PU-04, PI-01 a PI-03, PF-01 a PF-04, PF-06 a PF-08, PF-12, PF-13, PF-16, PF-17, PA-03 y PS-03.
 
 ## Desarrollo sin contenedores para el API y la interfaz
+
+Con Node 20 o superior:
 
 ```
 docker compose up -d db

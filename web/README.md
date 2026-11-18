@@ -1,27 +1,19 @@
-# Web
+# SSES — Interfaz (Angular 17)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.17.
+Interfaz del MVP del Piloto SSES. Cómo levantar el proyecto completo, los usuarios de demostración y el guion de la sustentación están en el [README principal](../README.md).
 
-## Development server
+Para trabajar solo en la interfaz, con el API y la base de datos arriba:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+```
+npm install
+npx ng serve      # http://localhost:4200, reenvía /api a http://localhost:3000 (proxy.conf.json)
+npx ng build      # compilación de producción en dist/
+```
 
-## Code scaffolding
+Organización:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- `src/app/core/`: sesión, cliente del API, guardas de acceso, modelos y componentes compartidos.
+- `src/app/paginas/`: una pantalla por caso de uso.
+- `src/styles.scss`: tema de Angular Material y todo el estilo global.
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+La interfaz no tiene pruebas propias. Las reglas de negocio se prueban en el API (`api/test`).

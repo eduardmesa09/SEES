@@ -2,6 +2,8 @@
 
 Ajustes al documento de NovaTech Asociados para que los actores sean coherentes con el pliego del Ministerio y entre secciones.
 
+> **Estado.** Las correcciones de texto ya están aplicadas en `MateriaJueves_ParcialFinalCorregido.docx`, sin cambios de estilo. Falta revisar a mano los **diagramas** del numeral 2.8, porque son imágenes (ver la sección 2.8 más abajo).
+
 ## El problema
 
 El pliego distingue dos poblaciones:

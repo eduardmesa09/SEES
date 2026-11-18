@@ -1,0 +1,12 @@
+# Fines de línea uniformes entre Windows, macOS y Linux.
+* text=auto eol=lf
+
+# Los scripts de Windows necesitan CRLF para que cmd.exe los ejecute bien.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binarios: nunca se convierten.
+*.docx binary
+*.pdf binary
+*.png binary
+*.ico binary
