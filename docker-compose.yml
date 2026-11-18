@@ -1,0 +1,43 @@
+name: sses
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sses
+      POSTGRES_USER: sses
+      POSTGRES_PASSWORD: sses_dev
+      TZ: America/Bogota
+    ports:
+      - "5433:5432"
+    volumes:
+      - sses_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sses -d sses"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./api
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgres://sses:sses_dev@db:5432/sses
+      JWT_SECRET: sses-mvp-secreto-solo-para-demo
+      JWT_TTL_SEGUNDOS: "14400"
+      SSES_ZONA_HORARIA: America/Bogota
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+  web:
+    build: ./web
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+
+volumes:
+  sses_pgdata:
