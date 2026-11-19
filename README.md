@@ -23,7 +23,7 @@ Además incluye las funciones que completan el Piloto:
 
 Todos los datos son sintéticos (RQ_021): no hay información real de estudiantes ni de docentes.
 
-> **Actores.** El acompañamiento pedagógico lo realiza y lo registra el **tutor**, sobre los **docentes** de la institución, que no son usuarios del sistema. El **tutor líder** supervisa y evalúa a los tutores. Esta lectura corrige una inconsistencia del documento; los cambios que hay que hacerle están en [CORRECCIONES-PROPUESTA.md](CORRECCIONES-PROPUESTA.md).
+> **Actores.** El acompañamiento pedagógico lo realiza y lo registra el **tutor**, sobre los **docentes** de la institución, que no son usuarios del sistema. El **tutor líder** supervisa y evalúa a los tutores.
 
 ## Contenido del repositorio
 
@@ -35,6 +35,7 @@ Todos los datos son sintéticos (RQ_021): no hay información real de estudiante
 | `iniciar-demo.cmd`, `reiniciar-datos.cmd` | Atajos de Windows para levantar la demo y reiniciar los datos |
 | `MateriaJueves_ParcialFinalCorregido.docx` | La propuesta técnica con las correcciones de actores ya aplicadas |
 | `CORRECCIONES-PROPUESTA.md` | Qué se corrigió en la propuesta y por qué |
+| `PITCH.md` | Guion hablado de la sustentación, con las funciones del MVP por actor |
 
 ## Cómo levantarlo
 
