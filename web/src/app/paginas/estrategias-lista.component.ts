@@ -46,7 +46,7 @@ import { SesionService } from '../core/sesion.service';
         <mat-select [(ngModel)]="estado" (ngModelChange)="cargar()">
           <mat-option value="">Todos</mat-option>
           <mat-option value="EDITABLE">Editable</mat-option>
-          <mat-option value="BLOQUEADA">Bloqueada</mat-option>
+          <mat-option value="BLOQUEADA">Edición bloqueada</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
@@ -77,7 +77,7 @@ import { SesionService } from '../core/sesion.service';
                 <td><app-medidor [valor]="e.vinculados" [total]="e.cupoMaximo" /></td>
                 <td>
                   @if (e.estado === 'BLOQUEADA') {
-                    <app-chip tono="critico" icono="lock">Bloqueada</app-chip>
+                    <app-chip tono="neutro" icono="lock">Edición bloqueada</app-chip>
                   } @else {
                     <app-chip tono="bien" icono="edit">Editable</app-chip>
                   }

@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { MATERIAL, mensajeDe } from '../core/compartido';
 import { SesionService } from '../core/sesion.service';
+import { apiLocal } from '../core/api-navegador';
+import { API_EN_NAVEGADOR } from '../core/modo';
 
 /** CU-01: ingreso al Piloto. El perfil y el ámbito los determina el servidor. */
 @Component({
@@ -51,6 +53,24 @@ import { SesionService } from '../core/sesion.service';
             }
           </div>
         </div>
+
+        @if (enNavegador) {
+          <div class="aviso aviso--info login__navegador">
+            <mat-icon>public</mat-icon>
+            <div>
+              <strong>Versión en línea</strong>
+              <p>
+                El Piloto corre completo en este navegador y los datos se guardan solo aquí.
+                @if (cargadosEl()) { Datos sintéticos cargados el {{ cargadosEl() }}. }
+              </p>
+              <div class="aviso__acciones">
+                <button mat-stroked-button type="button" (click)="reiniciar()" [disabled]="reiniciando()">
+                  <mat-icon>restart_alt</mat-icon> {{ reiniciando() ? 'Reiniciando…' : 'Reiniciar datos de la demostración' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
       </section>
     </div>
   `,
@@ -77,8 +97,24 @@ export class LoginComponent {
     { perfil: 'Ingeniero de soporte', nombre: 'Diego Ruiz', correo: 'soporte@sses.test' },
   ];
 
+  readonly enNavegador = API_EN_NAVEGADOR;
+  readonly cargadosEl = signal<string | null>(null);
+  readonly reiniciando = signal(false);
+
   constructor() {
     if (this.sesion.usuario()) this.router.navigateByUrl(this.sesion.rutaInicial());
+    // La primera visita crea la base en el navegador; se arranca de una vez para que el ingreso sea rápido.
+    if (this.enNavegador) apiLocal().then((a) => this.cargadosEl.set(a.datosCargadosEl())).catch(() => undefined);
+  }
+
+  /** Versión en línea: vuelve a dejar los datos como recién instalados, igual que reiniciar-datos.cmd. */
+  reiniciar(): void {
+    if (!confirm('Se borrará todo lo registrado en este navegador y se cargarán de nuevo los datos sintéticos. ¿Continuar?')) return;
+    this.reiniciando.set(true);
+    apiLocal()
+      .then((a) => a.reiniciar().then(() => this.cargadosEl.set(a.datosCargadosEl())))
+      .catch(() => this.error.set('No fue posible reiniciar los datos. Recargue la página e intente de nuevo.'))
+      .finally(() => this.reiniciando.set(false));
   }
 
   usar(correo: string): void {

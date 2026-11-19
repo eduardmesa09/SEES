@@ -1,0 +1,73 @@
+# Publica la versión en línea del MVP en GitHub Pages en cada push a main.
+# El API y la base de datos corren dentro del navegador (ver api/navegador/), así que basta un sitio estático.
+name: Publicar en GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            api/package-lock.json
+            web/package-lock.json
+
+      - name: Dependencias del API
+        working-directory: api
+        run: npm ci --no-fund --no-audit
+
+      - name: Pruebas del API sobre la base del navegador (PGlite)
+        working-directory: api
+        run: npm run test:navegador
+
+      - name: Empaquetar el API para el navegador
+        working-directory: api
+        run: npm run build:navegador
+
+      - name: Dependencias de la interfaz
+        working-directory: web
+        run: npm ci --no-fund --no-audit
+
+      - name: Compilar la interfaz
+        working-directory: web
+        run: npx ng build --configuration pages --base-href "/${{ github.event.repository.name }}/"
+
+      # Pages no conoce las rutas de Angular: 404.html entrega la aplicación para cualquier ruta.
+      - name: Preparar el sitio
+        run: |
+          cp web/dist/web/browser/index.html web/dist/web/browser/404.html
+          touch web/dist/web/browser/.nojekyll
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist/web/browser
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4

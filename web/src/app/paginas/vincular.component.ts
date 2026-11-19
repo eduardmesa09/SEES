@@ -29,14 +29,14 @@ import { Candidatos, Estudiante, ResultadoVinculacion } from '../core/modelos';
       }
 
       @if (r.bloqueoAplicado) {
-        <div class="aviso aviso--critico" style="margin-top: 14px; margin-bottom: 0">
+        <div class="aviso aviso--neutro" style="margin-top: 14px; margin-bottom: 0">
           <mat-icon>lock</mat-icon>
           <div>
             <strong>La estrategia quedó bloqueada para edición</strong>
             <div class="cambio-estado">
               <app-chip tono="bien" icono="edit">Editable</app-chip>
               <mat-icon>arrow_forward</mat-icon>
-              <app-chip tono="critico" icono="lock">Bloqueada</app-chip>
+              <app-chip tono="neutro" icono="lock">Edición bloqueada</app-chip>
             </div>
             <p>Ya tiene participantes: desde ahora cualquier ajuste estructural requiere una solicitud de modificación.</p>
           </div>

@@ -30,14 +30,33 @@ Todos los datos son sintéticos (RQ_021): no hay información real de estudiante
 | Ruta | Qué es |
 |---|---|
 | `api/` | API REST (Node + TypeScript) y sus pruebas |
+| `api/navegador/` | Adaptación del API para que corra dentro del navegador (versión en línea) |
 | `web/` | Interfaz (Angular) |
 | `docker-compose.yml` | Base de datos, API e interfaz en contenedores |
 | `iniciar-demo.cmd`, `reiniciar-datos.cmd` | Atajos de Windows para levantar la demo y reiniciar los datos |
-| `MateriaJueves_ParcialFinalCorregido.docx` | La propuesta técnica con las correcciones de actores ya aplicadas |
-| `CORRECCIONES-PROPUESTA.md` | Qué se corrigió en la propuesta y por qué |
-| `PITCH.md` | Guion hablado de la sustentación, con las funciones del MVP por actor |
+| `.github/workflows/pages.yml` | Publicación automática de la versión en línea en GitHub Pages |
 
-## Cómo levantarlo
+## Usarlo en línea, sin instalar nada
+
+**https://eduardmesa09.github.io/SEES/**
+
+Basta con abrir el enlace en un navegador actualizado (Chrome, Edge, Firefox o Safari). No hay que instalar Docker ni Node.
+
+**Cómo funciona.** GitHub Pages solo sirve archivos estáticos. Por eso, en esta versión el API y la base de datos corren **dentro del navegador**:
+- La base de datos es PostgreSQL compilado a WebAssembly ([PGlite](https://pglite.dev)), con el mismo esquema, los mismos triggers y los mismos datos sintéticos.
+- El API es el mismo código de `api/src`. Solo cambian cuatro piezas de Node por equivalentes para el navegador (ver `api/navegador/shims/`).
+- Las 83 pruebas del API también se corren sobre PGlite antes de cada publicación.
+
+**Qué hay que saber:**
+- **La primera visita** descarga unos 15 MB y crea la base con los datos sintéticos. Tarda unos segundos. Las siguientes visitas abren la base guardada en alrededor de un segundo.
+- **Los datos viven en ese navegador.** Todas las pestañas del mismo navegador ven los mismos datos, así que se puede tener un perfil por pestaña, igual que con Docker. Otro navegador u otro equipo empieza con sus propios datos.
+- **Reiniciar los datos:** en la pantalla de ingreso, *Reiniciar datos de la demostración*. Hace lo mismo que `reiniciar-datos.cmd`.
+- Los datos sintéticos se generan relativos a la fecha de la primera visita. Si se vuelve a usar otro mes, conviene reiniciarlos para que el guion funcione tal como está escrito.
+- En una ventana privada o de incógnito los datos se borran al cerrarla.
+
+**Publicarla.** El workflow `.github/workflows/pages.yml` publica el sitio en cada push a `main`. Solo hay que activarlo una vez: en el repositorio, *Settings* → *Pages* → *Build and deployment* → *Source*: **GitHub Actions**. El avance se ve en la pestaña *Actions*.
+
+## Cómo levantarlo con Docker
 
 **Requisitos.**
 - Git.
@@ -217,6 +236,7 @@ La sesión vive en cada pestaña: puede tener varios perfiles abiertos a la vez,
 | API | Node 22 + TypeScript + Express (REST, JWT) |
 | Datos | PostgreSQL 16 |
 | Empaquetado | Docker Compose: `db`, `api`, `web` (nginx) |
+| Versión en línea | GitHub Pages: el API empaquetado con esbuild y PostgreSQL en WebAssembly (PGlite) |
 | Pruebas | Vitest + Supertest |
 
 Frente al marco tecnológico de la propuesta (numeral 2.6), el MVP reemplaza .NET 8 por Node/TypeScript en la capa de servicios. Se mantienen la interfaz, el motor de base de datos, el estilo REST, la autenticación con JWT y los contenedores.
@@ -230,6 +250,8 @@ api/
                           reportes, cargas, monitoreo
   src/seed.ts             datos sintéticos, relativos a la fecha en que se cargan
   test/                   pruebas con los identificadores de la matriz 2.9.4
+  navegador/              versión en línea: reemplazos de express, pg, jsonwebtoken y node:crypto,
+                          el worker de PGlite y el script que empaqueta todo para el navegador
 web/
   src/app/core/           sesión, cliente del API, guardas, componentes compartidos
   src/app/paginas/        una pantalla por caso de uso
@@ -259,6 +281,13 @@ Son 83 casos en tres archivos:
 
 Los casos llevan los identificadores de la matriz del numeral 2.9.4: PU-01 a PU-04, PI-01 a PI-03, PF-01 a PF-04, PF-06 a PF-08, PF-12, PF-13, PF-16, PF-17, PA-03 y PS-03.
 
+Las mismas 83 pruebas se pueden correr sobre PGlite, la base de la versión en línea. No necesitan Docker:
+
+```
+cd api
+npm run test:navegador
+```
+
 ## Desarrollo sin contenedores para el API y la interfaz
 
 Con Node 20 o superior:
@@ -271,6 +300,15 @@ cd web && npm install && npx ng serve      # http://localhost:4200
 
 Antes hay que detener los contenedores `api` y `web` (`docker compose stop api web`), porque usan el mismo puerto 3000.
 
+Para probar la versión en línea en el propio equipo, sin Docker:
+
+```
+cd api && npm install && npm run build:navegador      # deja el API empaquetado en web/api-navegador
+cd web && npm install && npx ng build --configuration pages
+```
+
+El resultado queda en `web/dist/web/browser` y se sirve bajo la ruta `/SEES/`, igual que en GitHub Pages. La interfaz es la misma; la configuración `pages` solo cambia `src/app/core/modo.ts`, que hace que las peticiones a `/api` las atienda el API del navegador en lugar de la red.
+
 ## Simplificaciones frente al Piloto completo
 
 - Las credenciales de activación se muestran una vez al administrador, en lugar de enviarse por correo. No hay recuperación de contraseña por enlace.
@@ -281,4 +319,4 @@ Antes hay que detener los contenedores `api` y `web` (`docker compose stop api w
   - Adjuntar evidencias.
   - Operación sin conexión.
   - Notificaciones por correo.
-  - Despliegue en la nube.
+  - Despliegue en la nube con un servidor real. La versión en línea de GitHub Pages es para que cualquiera pruebe el MVP: cada navegador tiene su propia base de datos.

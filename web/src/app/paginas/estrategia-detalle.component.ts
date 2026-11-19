@@ -91,7 +91,7 @@ export class SolicitudDialogo {
           </div>
         </div>
       } @else if (e.estado === 'BLOQUEADA') {
-        <div class="aviso aviso--critico">
+        <div class="aviso aviso--neutro">
           <mat-icon>lock</mat-icon>
           <div>
             <strong>Estrategia bloqueada para edición</strong>

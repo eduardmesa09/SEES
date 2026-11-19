@@ -80,6 +80,37 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "pages": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kb",
+                  "maximumError": "16kb"
+                }
+              ],
+              "outputHashing": "all",
+              "baseHref": "/SEES/",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/core/modo.ts",
+                  "with": "src/app/core/modo.navegador.ts"
+                }
+              ],
+              "assets": [
+                "src/favicon.ico",
+                "src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "api-navegador",
+                  "output": "api-navegador"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

@@ -9,6 +9,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { interceptorDeSesion } from './core/acceso';
+import { interceptorApiEnNavegador } from './core/api-navegador';
+import { API_EN_NAVEGADOR } from './core/modo';
 
 registerLocaleData(localeEsCo);
 
@@ -29,7 +31,8 @@ class PaginadorEnEspanol extends MatPaginatorIntl {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, withComponentInputBinding()),
-    provideHttpClient(withInterceptors([interceptorDeSesion])),
+    // En GitHub Pages el API corre en el navegador; el interceptor va último para recibir el token.
+    provideHttpClient(withInterceptors(API_EN_NAVEGADOR ? [interceptorDeSesion, interceptorApiEnNavegador] : [interceptorDeSesion])),
     provideAnimations(),
     { provide: LOCALE_ID, useValue: 'es-CO' },
     { provide: MatPaginatorIntl, useClass: PaginadorEnEspanol },

@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# API empaquetado para el navegador (se genera con npm run build:navegador en api/)
+/api-navegador

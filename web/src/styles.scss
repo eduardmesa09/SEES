@@ -177,6 +177,7 @@ a { color: var(--primario); }
 .aviso--aviso { background: #fff8e6; border-color: #f6dfa3; > mat-icon { color: #b97a00; } }
 .aviso--info { background: #eff5fd; border-color: #c9dcf5; > mat-icon { color: var(--info); } }
 .aviso--bien { background: #eef8ee; border-color: #bfe3bf; > mat-icon { color: var(--bien); } }
+.aviso--neutro { background: #f3f4f6; border-color: #d9dce1; > mat-icon { color: var(--tenue); } }
 
 // ---------------------------------------------------------------- Medidor
 .medidor { min-width: 120px; }
@@ -317,3 +318,6 @@ mat-dialog-content.mat-mdc-dialog-content { color: var(--tinta); }
 }
 .tutor-celda { display: flex; align-items: center; justify-content: space-between; gap: 4px;
   button { flex: none; color: var(--primario); } }
+
+// Aviso de la versión en línea (GitHub Pages) en la pantalla de ingreso.
+.login__navegador { margin-top: 18px; margin-bottom: 0; }
