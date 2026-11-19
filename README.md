@@ -48,7 +48,7 @@ Basta con abrir el enlace en un navegador actualizado (Chrome, Edge, Firefox o S
 - Las 83 pruebas del API también se corren sobre PGlite antes de cada publicación.
 
 **Qué hay que saber:**
-- **La primera visita** descarga unos 15 MB y crea la base con los datos sintéticos. Tarda unos segundos. Las siguientes visitas abren la base guardada en alrededor de un segundo.
+- **La primera visita** descarga unos 15 MB y crea la base con los datos sintéticos. Tarda unos segundos. Las siguientes visitas abren la base guardaada en alrededor de un segundo.
 - **Los datos viven en ese navegador.** Todas las pestañas del mismo navegador ven los mismos datos, así que se puede tener un perfil por pestaña, igual que con Docker. Otro navegador u otro equipo empieza con sus propios datos.
 - **Reiniciar los datos:** en la pantalla de ingreso, *Reiniciar datos de la demostración*. Hace lo mismo que `reiniciar-datos.cmd`.
 - Los datos sintéticos se generan relativos a la fecha de la primera visita. Si se vuelve a usar otro mes, conviene reiniciarlos para que el guion funcione tal como está escrito.
